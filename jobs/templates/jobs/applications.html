@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<h2>Applicants for: <span style="color:#007bff;">{{ job.title }}</span></h2>
+
+<table border="1" cellpadding="10" style="width:100%; border-collapse:collapse; margin-top:20px;">
+    <tr style="background:#f2f2f2;">
+        <th>Name</th>
+        <th>Email</th>
+        <th>Resume</th>
+        <th>Cover Letter</th>
+        <th>Date Applied</th>
+    </tr>
+
+    {% for app in applications %}
+    <tr>
+        <td>{{ app.applicant.username }}</td>
+        <td>{{ app.applicant.email }}</td>
+        <td><a href="{{ app.resume.url }}" download style="color:blue;">Download</a></td>
+        <td>{{ app.cover_letter }}</td>
+        <td>{{ app.created_at }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5" style="text-align:center; padding:15px;">No applications yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br>
+<a href="{% url 'job_detail' job.id %}">⬅ Back to Job</a>
+
+{% endblock %}

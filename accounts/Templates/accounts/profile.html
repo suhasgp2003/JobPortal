@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-4 d-flex justify-content-center align-items-center">
+    <div class="card shadow p-4 rounded-4 form-box">
+
+        <h5 class="fw-bold text-center mb-3">My Profile 💼</h5>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Phone -->
+            <div class="mb-2">
+                <label class="form-label small fw-semibold">Phone</label>
+                {{ form.phone }}
+            </div>
+
+            <!-- Company Name -->
+            <div class="mb-2">
+                <label class="form-label small fw-semibold">Company name</label>
+                {{ form.company_name }}
+            </div>
+
+            <!-- Profile Picture -->
+            <div class="mb-3">
+                <label class="form-label small fw-semibold">Profile picture</label>
+
+                <div class="text-center mb-2">
+                    {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" 
+                        class="rounded-circle border profile-img">
+                    {% else %}
+                        <img src="/static/default-user.png" 
+                        class="rounded-circle border profile-img">
+                    {% endif %}
+                </div>
+
+                {{ form.profile_picture }}
+            </div>
+
+            <button class="btn btn-success w-100 py-1 rounded-3 small fw-semibold">
+                Save Changes ✔️
+            </button>
+        </form>
+
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 py-1 rounded-3 mt-3 small fw-semibold">
+            Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    /* 🔹 Reduce form width */
+    .form-box {
+        width: 420px;
+    }
+
+    /* 🔹 Resize inputs for minimal look */
+    input, select {
+        width: 100%;
+        height: 35px;
+        padding: 6px 10px;
+        font-size: 14px;
+        border-radius: 8px;
+        border: 1px solid #cfcfcf;
+    }
+
+    input[type="file"] {
+        font-size: 13px;
+        height: 32px;
+    }
+
+    /* 🔹 Profile image size smaller */
+    .profile-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+    }
+
+    /* Remove Django clear checkbox */
+    input[type="checkbox"] {
+        display: none !important;
+    }
+
+    /* Better UI focus highlight */
+    input:focus {
+        border-color: #198754;
+        box-shadow: 0 0 4px rgba(25,135,84,0.25);
+        outline: none;
+    }
+</style>
+{% endblock %}

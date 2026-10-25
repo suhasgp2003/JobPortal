@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+    background: #f5f7fb;
+}
+
+/* 🔹 Header - Slightly Bigger */
+.header-section {
+    background: #5C62FF;
+    color: white;
+    padding: 22px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 22px;
+    box-shadow: 0px 6px 14px rgba(0,0,0,0.05);
+}
+
+.header-section h2 {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.header-section p {
+    font-size: 14px;
+    opacity: .85;
+}
+
+/* 🔹 Cards - Slightly Bigger */
+.profile-card,
+.action-card {
+    border-radius: 16px !important;
+    border: none;
+    transition: .25s;
+    background: #fff;
+    padding: 20px !important;
+}
+
+.profile-card:hover,
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 10px 22px rgba(0,0,0,0.06);
+}
+
+/* 🔹 Profile Image Slightly Bigger */
+.profile-img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+/* 🔹 Button Medium Size */
+.btn-rounded {
+    border-radius: 28px;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* 🔹 Icons Slightly Bigger */
+.icon {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+/* 🔹 Text Sizes Slightly Increased */
+.username {
+    font-size: 17px;
+    margin-top: 6px;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.row {
+    gap: 12px;
+}
+
+</style>
+
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="header-section">
+        <h2>👋 Welcome Back, {{ user.username }}</h2>
+        <p>Manage applications, post jobs & update your profile effortlessly.</p>
+    </div>
+
+    <div class="row justify-content-center">
+
+        <!-- Profile Card -->
+        <div class="col-md-4">
+            <div class="card shadow text-center profile-card">
+
+                <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'img/default-user.png' %}{% endif %}" 
+                     class="profile-img mb-2">
+
+                <h5 class="fw-bold username">{{ user.username }}</h5>
+                <p class="text-muted" style="font-size: 13px;">{{ user.email }}</p>
+
+                <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-rounded w-100 mb-2">✏️ Edit Profile</a>
+                <a href="{% url 'logout' %}" class="btn btn-danger btn-rounded w-100">🔓 Logout</a>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-md-6">
+
+            <div class="card shadow action-card mb-3 text-center">
+                <div class="icon">💼</div>
+                <h5 class="fw-bold" style="margin-bottom: 6px;">Browse Jobs</h5>
+                <p class="text-muted" style="font-size: 13px;">Find and apply instantly.</p>
+                <a href="{% url 'job_list' %}" class="btn btn-primary btn-rounded px-4">Browse Jobs</a>
+            </div>
+
+            <div class="card shadow action-card text-center">
+                <div class="icon">📌</div>
+                <h5 class="fw-bold" style="margin-bottom: 6px;">Your Listings</h5>
+                <p class="text-muted" style="font-size: 13px;">Manage your posted jobs.</p>
+                <a href="{% url 'my_jobs' %}" class="btn btn-dark btn-rounded px-4">Manage Listings</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

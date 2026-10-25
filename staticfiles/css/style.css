@@ -1,0 +1,215 @@
+/* ================================
+   🌍 GLOBAL RESET + BACKGROUND
+================================ */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #eef2ff, #e0f2fe, #fef9c3);
+    background-attachment: fixed;
+}
+
+/* ================================
+   🔷 NAVBAR
+================================ */
+.navbar {
+    background: #0A66C2 !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: white !important;
+}
+
+.nav-link {
+    font-weight: 600;
+    color: white !important;
+    transition: 0.2s;
+}
+
+.nav-link:hover {
+    opacity: 0.85;
+}
+
+/* ================================
+   🏠 HERO SECTION (Homepage)
+================================ */
+.hero-section {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #0F172A;
+}
+
+.hero-section p {
+    font-size: 18px;
+    color: #475569;
+}
+
+/* ================================
+   🎯 Category Boxes
+================================ */
+.dashboard-box {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px;
+    font-size: 22px;
+    transition: .3s;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.dashboard-box:hover {
+    transform: scale(1.05);
+    background: #E8EDFF;
+}
+
+/* ================================
+   📝 PAGE TITLES
+================================ */
+.page-title {
+    font-weight: 700;
+    font-size: 36px;
+    color: #111827;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* ================================
+   📦 CARDS
+================================ */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+    transition: 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* ================================
+   💼 JOB LISTING CARD
+================================ */
+.job-card {
+    padding: 22px;
+}
+
+.job-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.job-company {
+    font-size: 15px;
+    color: #6b7280;
+}
+
+.location {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #047857;
+}
+
+/* ================================
+   🎛 BUTTONS
+================================ */
+.btn {
+    border-radius: 10px !important;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: #0A66C2;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #084298;
+}
+
+.btn-success {
+    background: #059669;
+    border: none;
+}
+
+.btn-success:hover {
+    background: #047857;
+}
+
+/* ================================
+   🖊 FORMS
+================================ */
+input, textarea, select {
+    border-radius: 10px !important;
+    border: 2px solid #d1d5db;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #0A66C2;
+    box-shadow: 0 0 8px rgba(10,102,194,0.3);
+}
+
+/* ================================
+   👤 PROFILE IMAGE
+================================ */
+.profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #0A66C2;
+}
+
+/* ================================
+   📊 DASHBOARD LAYOUT
+================================ */
+.dashboard-wrapper {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.dashboard-card {
+    width: 380px;
+    text-align: center;
+}
+
+/* ================================
+   🧾 JOB DETAIL PAGE
+================================ */
+.job-detail {
+    max-width: 800px;
+    margin: auto;
+}
+
+.apply-btn {
+    width: 100%;
+    font-size: 20px;
+    padding: 18px;
+    border-radius: 14px;
+}
+
+/* ================================
+   📱 RESPONSIVE
+================================ */
+@media(max-width:768px) {
+    .dashboard-card { width: 100%; }
+    .hero-section h1 { font-size: 2.2rem; }
+    .hero-section input { width: 90% !important; }
+}
+
+

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .apply-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .apply-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #004aad;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    textarea {
+        resize: none;
+        border-radius: 10px !important;
+    }
+
+    .btn-custom {
+        background: #004aad;
+        color: white;
+        border-radius: 10px;
+        padding: 12px 18px;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+    .btn-custom:hover {
+        background: #00337d;
+    }
+
+</style>
+
+
+<div class="apply-container">
+    
+    <h2 class="apply-title">Apply for <span style="color:#0d6efd;">{{ job.title }}</span></h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Upload Resume</label>
+            {{ form.resume }}
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Cover Letter</label>
+            {{ form.cover_letter }}
+        </div>
+
+        <button type="submit" class="btn btn-custom">
+            Submit Application
+        </button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'job_detail' job.id %}" style="text-decoration:none;">⬅ Back to Job</a>
+    </div>
+
+</div>
+
+{% endblock %}
