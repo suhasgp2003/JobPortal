@@ -20,7 +20,7 @@
         color: #004aad;
     }
 
-    .form-label {
+    .portal-label {
         font-weight: 600;
     }
 
@@ -52,22 +52,22 @@
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <div class="mb-3">
-            <label class="form-label">Upload Resume</label>
+        <div class="mb-4">
+            <label class="portal-label">Upload Resume</label>
             {{ form.resume }}
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Cover Letter</label>
+        <div class="mb-4">
+            <label class="portal-label">Cover Letter</label>
             {{ form.cover_letter }}
         </div>
 
-        <button type="submit" class="btn btn-custom">
+        <button type="submit" class="portal-button btn-custom">
             Submit Application
         </button>
     </form>
 
-    <div class="text-center mt-3">
+    <div class="text-center mt-4">
         <a href="{% url 'job_detail' job.id %}" style="text-decoration:none;">⬅ Back to Job</a>
     </div>
 

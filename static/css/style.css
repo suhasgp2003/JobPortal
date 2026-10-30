@@ -12,23 +12,23 @@ body {
 /* ================================
    🔷 NAVBAR
 ================================ */
-.navbar {
+.portal-navbar {
     background: #0A66C2 !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-.navbar-brand {
+.portal-brand {
     font-weight: 700;
     color: white !important;
 }
 
-.nav-link {
+.portal-nav-link {
     font-weight: 600;
     color: white !important;
     transition: 0.2s;
 }
 
-.nav-link:hover {
+.portal-nav-link:hover {
     opacity: 0.85;
 }
 
@@ -83,7 +83,7 @@ body {
 /* ================================
    📦 CARDS
 ================================ */
-.card {
+.portal-card {
     background: #ffffff;
     border: none;
     border-radius: 18px;
@@ -92,7 +92,7 @@ body {
     transition: 0.25s ease;
 }
 
-.card:hover {
+.portal-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);
 }
@@ -124,26 +124,26 @@ body {
 /* ================================
    🎛 BUTTONS
 ================================ */
-.btn {
+.portal-button {
     border-radius: 10px !important;
     font-weight: 600;
 }
 
-.btn-primary {
+.portal-primary {
     background: #0A66C2;
     border: none;
 }
 
-.btn-primary:hover {
+.portal-primary:hover {
     background: #084298;
 }
 
-.btn-success {
+.portal-success {
     background: #059669;
     border: none;
 }
 
-.btn-success:hover {
+.portal-success:hover {
     background: #047857;
 }
 

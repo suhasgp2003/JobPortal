@@ -14,6 +14,6 @@ class ApplicationForm(forms.ModelForm):  # <-- Only one form
         fields = ['resume', 'cover_letter']
 
         widgets = {
-            'resume': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'cover_letter': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
+            'resume': forms.ClearableFileInput(attrs={'class': 'portal-field'}),
+            'cover_letter': forms.Textarea(attrs={'class': 'portal-field', 'rows': 6}),
         }

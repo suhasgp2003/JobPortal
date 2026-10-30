@@ -1,143 +1,198 @@
-{% extends "base.html" %}
-{% load static %}
+﻿{% extends "base.html" %}
 
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-
 <style>
-    body {
-    background: #f5f7fb;
-}
-
-/* 🔹 Header - Slightly Bigger */
-.header-section {
-    background: #5C62FF;
-    color: white;
-    padding: 22px;
-    border-radius: 16px;
-    text-align: center;
-    margin-bottom: 22px;
-    box-shadow: 0px 6px 14px rgba(0,0,0,0.05);
-}
-
-.header-section h2 {
-    font-weight: 600;
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-.header-section p {
-    font-size: 14px;
-    opacity: .85;
-}
-
-/* 🔹 Cards - Slightly Bigger */
-.profile-card,
-.action-card {
-    border-radius: 16px !important;
-    border: none;
-    transition: .25s;
-    background: #fff;
-    padding: 20px !important;
-}
-
-.profile-card:hover,
-.action-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 10px 22px rgba(0,0,0,0.06);
-}
-
-/* 🔹 Profile Image Slightly Bigger */
-.profile-img {
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
-}
-
-/* 🔹 Button Medium Size */
-.btn-rounded {
-    border-radius: 28px;
-    padding: 8px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* 🔹 Icons Slightly Bigger */
-.icon {
-    font-size: 26px;
-    margin-bottom: 6px;
-}
-
-/* 🔹 Text Sizes Slightly Increased */
-.username {
-    font-size: 17px;
-    margin-top: 6px;
-}
-
-.card-title {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.card-text {
-    font-size: 14px;
-    color: #6c757d;
-}
-
-.row {
-    gap: 12px;
-}
-
+    body { background: #f5f7fb; }
+    .header-section {
+        background: #5c62ff;
+        color: white;
+        padding: 22px;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 28px;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, .05);
+    }
+    .header-section h2 { font-weight: 600; font-size: 20px; margin-bottom: 6px; }
+    .header-section p { font-size: 14px; opacity: .9; margin-bottom: 0; }
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 360px) minmax(0, 480px);
+        justify-content: center;
+        align-items: start;
+        gap: 24px;
+    }
+    .profile-card {
+        overflow: hidden;
+        border: 1px solid #e4e9f2;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 12px 36px rgba(28, 48, 85, .07);
+        color: #172b4d;
+    }
+    .profile-card__cover {
+        height: 100px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(120deg, #0a66c2, #5369df);
+    }
+    .profile-card__cover::before,
+    .profile-card__cover::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border: 1px solid rgba(255, 255, 255, .16);
+        border-radius: 50%;
+        top: -115px;
+        right: -25px;
+    }
+    .profile-card__cover::after { width: 250px; height: 250px; top: -125px; right: -60px; }
+    .profile-card__body { padding: 0 26px 24px; text-align: center; }
+    .profile-card__avatar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 96px;
+        height: 96px;
+        margin: -48px auto 14px;
+        border: 5px solid #fff;
+        border-radius: 50%;
+        background: #eaf0ff;
+        color: #3153a5;
+        box-shadow: 0 4px 12px rgba(28, 48, 85, .1);
+        font-size: 34px;
+        font-weight: 700;
+        object-fit: cover;
+    }
+    .profile-card__name { margin: 0 0 8px; font-size: 23px; font-weight: 700; letter-spacing: -.5px; overflow-wrap: anywhere; }
+    .profile-card__role {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        background: #edf3ff;
+        color: #3153a5;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .profile-card__details { margin: 22px 0; padding: 18px 0; border-top: 1px solid #edf0f5; border-bottom: 1px solid #edf0f5; text-align: left; }
+    .profile-card__detail { display: flex; align-items: center; gap: 12px; }
+    .profile-card__detail + .profile-card__detail { margin-top: 16px; }
+    .profile-card__detail-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #f4f7fb;
+        color: #637795;
+    }
+    .profile-card svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .profile-card__detail-text { min-width: 0; }
+    .profile-card__details dt { margin-bottom: 2px; color: #64748b; font-size: 11px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; }
+    .profile-card__details dd { margin: 0; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+    .profile-card__edit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 12px 16px;
+        border: 1px solid #0a66c2;
+        border-radius: 11px;
+        background: #0a66c2;
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background .2s, box-shadow .2s;
+    }
+    .profile-card__edit:hover { background: #084e96; color: white; box-shadow: 0 4px 12px rgba(10, 102, 194, .18); }
+    .profile-card__logout { display: inline-flex; align-items: center; gap: 7px; margin-top: 16px; padding: 4px 8px; color: #64748b; font-size: 13px; text-decoration: none; border-radius: 5px; }
+    .profile-card__logout:hover { color: #b42318; background: #fff3f2; }
+    .profile-card a:focus-visible { outline: 3px solid #8bb8f5; outline-offset: 4px; }
+    .profile-card__footer { margin: 0; padding: 13px 20px; border-top: 1px solid #edf0f5; background: #fafbfd; color: #64748b; text-align: center; font-size: 12px; }
+    .dashboard-actions { min-width: 0; display: grid; gap: 20px; }
+    .dashboard-actions .action-card { border-radius: 16px; padding: 24px; text-align: center; }
+    .dashboard-actions .icon { font-size: 26px; margin-bottom: 6px; }
+    .dashboard-actions h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .dashboard-actions p { color: #6c757d; font-size: 13px; }
+    .dashboard-actions .btn-rounded { padding: 10px 20px; font-size: 14px; font-weight: 600; }
+    @media (max-width: 767px) {
+        .dashboard-grid { grid-template-columns: minmax(0, 480px); gap: 20px; }
+        .profile-card__body { padding-right: 22px; padding-left: 22px; }
+    }
 </style>
 
-
-<div class="container mt-4">
-
-    <!-- Header -->
+<div class="container mt-6">
     <div class="header-section">
-        <h2>👋 Welcome Back, {{ user.username }}</h2>
-        <p>Manage applications, post jobs & update your profile effortlessly.</p>
+        <h2>Welcome back, {{ user.first_name|default:user.username }}</h2>
+        <p>Manage applications, post jobs &amp; update your profile effortlessly.</p>
     </div>
-
-    <div class="row justify-content-center">
-
-        <!-- Profile Card -->
-        <div class="col-md-4">
-            <div class="card shadow text-center profile-card">
-
-                <img src="{% if user.profile.profile_picture %}{{ user.profile.profile_picture.url }}{% else %}{% static 'img/default-user.png' %}{% endif %}" 
-                     class="profile-img mb-2">
-
-                <h5 class="fw-bold username">{{ user.username }}</h5>
-                <p class="text-muted" style="font-size: 13px;">{{ user.email }}</p>
-
-                <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-rounded w-100 mb-2">✏️ Edit Profile</a>
-                <a href="{% url 'logout' %}" class="btn btn-danger btn-rounded w-100">🔓 Logout</a>
+    <div class="dashboard-grid">
+        <article class="profile-card" aria-labelledby="profile-name">
+            <div class="profile-card__cover" aria-hidden="true"></div>
+            <div class="profile-card__body">
+                {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" class="profile-card__avatar" alt="{{ user.username }}'s profile photo" width="96" height="96">
+                {% else %}
+                    <div class="profile-card__avatar" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
+                {% endif %}
+                <h2 class="profile-card__name" id="profile-name">{{ user.get_full_name|default:user.username }}</h2>
+                <span class="profile-card__role">{{ user.get_role_display|default:"Member" }}</span>
+                <dl class="profile-card__details">
+                    <div class="profile-card__detail">
+                        <span class="profile-card__detail-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg>
+                        </span>
+                        <div class="profile-card__detail-text"><dt>Email address</dt><dd>{{ user.email|default:"Email not added" }}</dd></div>
+                    </div>
+                    {% if user.profile.company_name %}
+                    <div class="profile-card__detail">
+                        <span class="profile-card__detail-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12a22 22 0 0 0 18 0M12 11v4"/></svg>
+                        </span>
+                        <div class="profile-card__detail-text"><dt>Company</dt><dd>{{ user.profile.company_name }}</dd></div>
+                    </div>
+                    {% endif %}
+                    {% if user.profile.phone %}
+                    <div class="profile-card__detail">
+                        <span class="profile-card__detail-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m7 3 3 5-3 3a16 16 0 0 0 6 6l3-3 5 3v3a1 1 0 0 1-1 1A18 18 0 0 1 3 4a1 1 0 0 1 1-1Z"/></svg>
+                        </span>
+                        <div class="profile-card__detail-text"><dt>Phone number</dt><dd>{{ user.profile.phone }}</dd></div>
+                    </div>
+                    {% endif %}
+                </dl>
+                <a href="{% url 'edit_profile' %}" class="profile-card__edit">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 3 5 5-12 12-6 1 1-6ZM13 6l5 5"/></svg>
+                    Edit Profile
+                </a>
+                <a href="{% url 'logout' %}" class="profile-card__logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M14 8l4 4-4 4M8 12h13"/></svg>
+                    Sign out
+                </a>
             </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="col-md-6">
-
-            <div class="card shadow action-card mb-3 text-center">
-                <div class="icon">💼</div>
-                <h5 class="fw-bold" style="margin-bottom: 6px;">Browse Jobs</h5>
-                <p class="text-muted" style="font-size: 13px;">Find and apply instantly.</p>
-                <a href="{% url 'job_list' %}" class="btn btn-primary btn-rounded px-4">Browse Jobs</a>
+            {% if user.date_joined %}
+                <p class="profile-card__footer">Member since {{ user.date_joined|date:"F Y" }}</p>
+            {% endif %}
+        </article>
+        <div class="dashboard-actions">
+            <div class="portal-card action-card">
+                <div class="icon" aria-hidden="true">&#128188;</div>
+                <h3>Browse Jobs</h3>
+                <p>Find and apply instantly.</p>
+                <a href="{% url 'job_list' %}" class="portal-button portal-primary btn-rounded">Browse Jobs</a>
             </div>
-
-            <div class="card shadow action-card text-center">
-                <div class="icon">📌</div>
-                <h5 class="fw-bold" style="margin-bottom: 6px;">Your Listings</h5>
-                <p class="text-muted" style="font-size: 13px;">Manage your posted jobs.</p>
-                <a href="{% url 'my_jobs' %}" class="btn btn-dark btn-rounded px-4">Manage Listings</a>
+            <div class="portal-card action-card">
+                <div class="icon" aria-hidden="true">&#128204;</div>
+                <h3>Your Listings</h3>
+                <p>Manage your posted jobs.</p>
+                <a href="{% url 'my_jobs' %}" class="portal-button portal-dark btn-rounded">Manage Listings</a>
             </div>
-
         </div>
     </div>
 </div>
-
 {% endblock %}

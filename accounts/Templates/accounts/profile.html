@@ -1,50 +1,55 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}My Profile{% endblock %}
 
 {% block content %}
-<div class="container py-4 d-flex justify-content-center align-items-center">
-    <div class="card shadow p-4 rounded-4 form-box">
+<div class="container py-6 flex justify-center items-center">
+    <div class="portal-card shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] p-6 rounded-2xl form-box">
 
-        <h5 class="fw-bold text-center mb-3">My Profile 💼</h5>
+        <h5 class="font-bold text-center mb-4">My Profile 💼</h5>
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+            {{ form.non_field_errors }}
 
             <!-- Phone -->
             <div class="mb-2">
-                <label class="form-label small fw-semibold">Phone</label>
+                <label for="{{ form.phone.id_for_label }}" class="portal-label portal-small font-semibold">Phone</label>
                 {{ form.phone }}
+                {{ form.phone.errors }}
             </div>
 
             <!-- Company Name -->
             <div class="mb-2">
-                <label class="form-label small fw-semibold">Company name</label>
+                <label for="{{ form.company_name.id_for_label }}" class="portal-label portal-small font-semibold">Company name</label>
                 {{ form.company_name }}
+                {{ form.company_name.errors }}
             </div>
 
             <!-- Profile Picture -->
-            <div class="mb-3">
-                <label class="form-label small fw-semibold">Profile picture</label>
+            <div class="mb-4">
+                <label for="{{ form.profile_picture.id_for_label }}" class="portal-label portal-small font-semibold">Profile picture</label>
 
                 <div class="text-center mb-2">
                     {% if user.profile.profile_picture %}
                         <img src="{{ user.profile.profile_picture.url }}" 
-                        class="rounded-circle border profile-img">
+                        class="rounded-[50%] border border-solid border-[#dee2e6] profile-img" alt="Your current profile photo">
                     {% else %}
-                        <img src="/static/default-user.png" 
-                        class="rounded-circle border profile-img">
+                        <img src="{% static 'img/default-user.png' %}"
+                        class="rounded-[50%] border border-solid border-[#dee2e6] profile-img" alt="Default profile avatar">
                     {% endif %}
                 </div>
 
                 {{ form.profile_picture }}
+                {{ form.profile_picture.errors }}
             </div>
 
-            <button class="btn btn-success w-100 py-1 rounded-3 small fw-semibold">
+            <button class="portal-button portal-success w-full py-1 rounded-lg portal-small font-semibold">
                 Save Changes ✔️
             </button>
         </form>
 
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100 py-1 rounded-3 mt-3 small fw-semibold">
+        <a href="{% url 'dashboard' %}" class="portal-button portal-outline-secondary w-full py-1 rounded-lg mt-4 portal-small font-semibold">
             Back to Dashboard
         </a>
     </div>

@@ -114,7 +114,6 @@ Application status tracking
 
 👩‍💻 Author
 
-Sathiya Priya
+Suhas GP
 Learning and building real-world Django applications.
 
-<p align="center">⭐ If you like this project, thank you for supporting my work ⭐</p> ```

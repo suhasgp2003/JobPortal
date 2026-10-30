@@ -1,12 +1,12 @@
-<div class="card shadow p-4" style="max-width: 550px; margin: auto;">
-    <h3 class="fw-bold mb-3">{{ title }}</h3>
+<div class="portal-card shadow-[0_0.5rem_1rem_rgba(0,0,0,0.15)] p-6" style="max-width: 550px; margin: auto;">
+    <h3 class="font-bold mb-4">{{ title }}</h3>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         
-        <div class="form-group mb-3">
+        <div class="mb-4">
             {{ form.as_p }}
         </div>
 
-        <button class="btn btn-primary w-100">{{ button_text }}</button>
+        <button class="portal-button portal-primary w-full">{{ button_text }}</button>
     </form>
 </div>
