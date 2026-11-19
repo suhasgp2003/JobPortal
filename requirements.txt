@@ -1,0 +1,13 @@
+# Core (needed to run locally on SQLite)
+Django>=6.0,<6.1
+celery>=5.6
+django-phonenumber-field>=8.4
+phonenumbers>=9.0
+pillow>=11.0
+python-dotenv>=1.2
+
+# Optional services (enabled from .env)
+django-redis>=6.0      # REDIS_URL -> Redis cache, rate limiting, Celery broker
+redis>=7.0
+psycopg2-binary>=2.9   # POSTGRES_PASSWORD -> PostgreSQL + full-text search
+twilio>=9.10           # TWILIO_* -> real SMS OTPs

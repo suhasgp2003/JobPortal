@@ -1,2 +1,8 @@
 node_modules/
 .verify-deps/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+uploads/
+staticfiles/

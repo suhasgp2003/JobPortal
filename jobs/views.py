@@ -1,86 +1,149 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .forms import JobForm, ApplicationForm
-from .models import Job, Application
+from django.views import View
+from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import CreateJobForm
+from django.http import HttpResponse
+from jobs.models import Job
+import math
+from applications.models import Application
+from core.utils import text_search
+# from django.http import HttpResponseRedirect
+
+# Create your views here.
+class CreateJob(LoginRequiredMixin, View):
+    def get(self, request):
+        if request.user.user_type == 'company' and request.user.company.is_verified:
+            form = CreateJobForm()
+            return render(request, 'jobs/post_job.html', {'form':form})
+        return HttpResponse("Non Company Users and Unverified Company can't Post Jobs.", status=403)
+
+    def post(self, request):
+        if request.user.user_type == 'company' and request.user.company.is_verified:
+            form = CreateJobForm(request.POST)
+            if form.is_valid():
+                new_job_data = form.save(commit=False)
+                new_job_data.company = request.user.company
+                new_job_data.save()
+                return redirect('company-dashboard-manage-jobs',1)
+            return render(request, 'jobs/post_job.html', {'form':form})
+        return HttpResponse("Non Company Users and Unverified Company can't Post Jobs.", status=403)
 
 
-def job_list(request):
-    jobs = Job.objects.all()
-    return render(request, 'jobs/job_list.html', {'jobs': jobs})
+class BrowseJobs(View):
+    def get(self, request, page_no):
+        ending_no_of_job = page_no * 8
+        starting_no_of_job = ending_no_of_job - 8
+        current_page_jobs = Job.objects.filter(status='live').order_by('-created_at')[starting_no_of_job : ending_no_of_job]
+        no_of_pages = math.ceil((Job.objects.filter(status='live').count())/8)
+        return render(request, 'jobs/browse_jobs.html', {'page_range':range(1,no_of_pages+1),
+                                                            'jobs':current_page_jobs,
+                                                            'page_no':page_no,
+                                                            'no_of_pages':no_of_pages})
+
+class JobDetails(LoginRequiredMixin, View):
+    def get(self, request, job_id):
+        job = get_object_or_404(Job, job_id=job_id)
+        user = request.user
+        if user.user_type == 'candidate':
+            if len(Application.objects.filter(candidate=user.candidate,job=job)) < 1:
+                return render(request, 'jobs/job_details.html',
+                                {'job':job,
+                                'already_applied':False})
+            return render(request, 'jobs/job_details.html',
+                                {'job':job,
+                                'already_applied':True})
+        else:
+            return render(request, 'jobs/job_details.html',
+                                {'job':job,
+                                'company':True})
+
+    def post(self,request, job_id):
+        user = request.user
+        if user:
+            if user.user_type=='candidate':
+                if user.candidate.resume:
+                    job = get_object_or_404(Job, job_id=job_id)
+                    if len(Application.objects.filter(candidate=user.candidate,job=job)) < 1:
+                        if job.status == 'live':
+                            Application.objects.create(candidate=user.candidate, job=job)
+                            return redirect('browse-jobs-page',page_no=1)
+                        return HttpResponse('You Cant Apply for this job.')
+                    return HttpResponse('You have Already Applied for this job.')
+                return HttpResponse('Upload Your Resume First from Accounts --> Profiles --> Edit Profile', status=403)
+            return HttpResponse('Only Candidates can Apply.', status=403)
+        return HttpResponse('Login First.', status=401)
 
 
-def job_detail(request, job_id):
-    job = get_object_or_404(Job, id=job_id)
-    return render(request, 'jobs/detail.html', {'job': job})
+class EditJob(LoginRequiredMixin, View):
+    def get(self, request, job_id):
+        user = request.user
+        if user.user_type == 'company' and user.company.is_verified:
+            job = get_object_or_404(Job, job_id=job_id, company = user.company)
+            form = CreateJobForm(instance=job)
+            return render(request, 'jobs/post_job.html', {'form':form,
+                                                            'job_id':job.job_id,
+                                                            'edit_job':True})
+        return HttpResponse('Not allowed', status=403)
+    
+    def post(self, request, job_id):
+        user = request.user
+        if user.user_type == 'company' and user.company.is_verified:
+            job = get_object_or_404(Job, job_id=job_id, company = user.company)
+            form = CreateJobForm(request.POST, instance=job)
+            if form.is_valid():
+                form.save()
+                return redirect('company-dashboard-manage-jobs',1)
+            return render(request, 'jobs/post_job.html', {'form': form,
+                                                            'job_id': job.job_id,
+                                                            'edit_job': True
+                                                        })
+        return HttpResponse('Not allowed', status=403)
+
+class SearchJob(View):
+    def get(self, request, page_no):
+        ending_no_of_job = page_no * 8
+        starting_no_of_job = ending_no_of_job - 8
+        
+        # query = SearchQuery(request.GET.get('query'),search_type='websearch')
 
 
-@login_required
-def create_job(request):
-    if request.method == 'POST':
-        form = JobForm(request.POST)
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.owner = request.user
-            job.save()
-            return redirect('my_jobs')
-    else:
-        form = JobForm()
+        # vector = (
+        #     SearchVector('title',weight='A')*4+
+        #     SearchVector('company__company_display_name',weight='A')+
+        #     SearchVector('skills', weight='B')+
+        #     SearchVector('location', weight='B')+
+        #     SearchVector('job_type',weight='B')
+        # )
+        # result = Job.objects.annotate(
+        #     rank = SearchRank(vector, query)
+        # ).filter(rank__gt=0.00000000000001).order_by('-rank')
+        # for job in result:
+        #     print(job.title, job.rank)
+        keyword = request.GET.get('keyword')
+        location = request.GET.get('location')
 
-    return render(request, 'jobs/create_job.html', {'form': form})
+        if keyword and location:
+            result = text_search(
+                text_search(Job.objects.all(), ['location'], location),
+                ['title', 'job_description', 'company__company_display_name', 'job_type', 'requirements', 'skills'],
+                keyword)
 
+            query = f'{keyword},{location}'
 
-@login_required
-def my_jobs(request):
-    jobs = Job.objects.filter(owner=request.user)
-    return render(request, 'jobs/my_jobs.html', {'jobs': jobs})
+        else:
+            query = request.GET.get('query')
+            result = text_search(
+                Job.objects.all(),
+                ['title', 'job_description', 'company__company_display_name', 'location', 'job_type', 'requirements', 'skills'],
+                query)
 
-
-@login_required
-def edit_job(request, job_id):
-    job = get_object_or_404(Job, id=job_id, owner=request.user)
-
-    if request.method == 'POST':
-        form = JobForm(request.POST, instance=job)
-        if form.is_valid():
-            form.save()
-            return redirect('my_jobs')
-    else:
-        form = JobForm(instance=job)
-
-    return render(request, 'jobs/edit_job.html', {'form': form})
-
-
-@login_required
-def delete_job(request, job_id):
-    job = get_object_or_404(Job, id=job_id, owner=request.user)
-    job.delete()
-    return redirect('my_jobs')
-
-
-@login_required
-def apply_to_job(request, job_id):
-    job = get_object_or_404(Job, id=job_id)
-
-    if request.method == 'POST':
-        form = ApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.job = job
-            application.applicant = request.user
-            application.save()
-            return redirect('job_detail', job_id=job.id)
-    else:
-        form = ApplicationForm()
-
-    return render(request, 'jobs/apply.html', {'form': form, 'job': job})
-
-
-@login_required
-def view_applications(request, job_id):
-    job = get_object_or_404(Job, id=job_id, owner=request.user)
-    applications = Application.objects.filter(job=job)
-
-    return render(request, 'jobs/applications.html', {
-        'job': job,
-        'applications': applications
-    })
+        jobs = result[starting_no_of_job : ending_no_of_job]
+        no_of_pages = math.ceil(len(result)/8)
+        return render(request, 'jobs/browse_jobs.html', {'jobs':jobs,
+                                                            'page_range':range(1, no_of_pages+1),
+                                                            'page_no':page_no,
+                                                            'no_of_pages':no_of_pages,
+                                                            'query':query,
+                                                            'keyword':keyword,
+                                                            'location':location})

@@ -1,119 +1,154 @@
-<p align="center">
-  <img src="https://via.placeholder.com/600x180?text=Job+Board+Web+Application" alt="Job Board Logo"/>
-</p>
+# CareerNest – Django Job Portal
 
-<h1 align="center">🧑‍💼 Job Board Web Application</h1>
-
-<p align="center">
-A complete Django job portal where employers can post jobs and users can apply.
-</p>
+A Django-based job portal that focuses on real backend systems like task scheduling, async processing, OTP verification, application workflows, and rate limiting.
 
 ---
 
-### 📌 Project Status
+## 🛠 Tech Stack
 
-![Python](https://img.shields.io/badge/Python-3.12-blue)
-![Django](https://img.shields.io/badge/Django-5.2-green)
-![Status](https://img.shields.io/badge/Production_Ready-brightgreen)
+### Backend
+- Django
+- PostgreSQL
+- Celery
+- Redis
 
----
+### Frontend
+- Django Templates
+- HTML / CSS / JavaScript
 
-## 🧠 Overview
-
-This is a **fully functional Job Board Application** built using Django.  
-Employers can create job listings and applicants can submit applications with resumes.
-
-Perfect for learning Django, portfolio building, or building a real job platform.
-
----
-
-## 🚀 Features
-
-- ✔ Create and manage job listings  
-- ✔ View detailed job pages  
-- ✔ Apply for jobs with resume + cover letter  
-- ✔ User authentication (Login/Register)  
-- ✔ Profile picture upload  
-- ✔ Clean UI design  
+### External Services
+- Twilio (SMS)
+- SMTP (Email)
 
 ---
 
-## 🛠️ Tech Stack
+## ⚡ Core Features
 
-| Feature | Technology |
-|--------|------------|
-| Backend Framework | Django |
-| Python Version | 3.12 |
-| Database | SQLite |
-| Frontend | HTML + CSS + Bootstrap |
-| File Upload Support | Yes |
-| Authentication | Django Auth System |
+### 🔹 Scheduled Tasks (Celery Beat)
+- Runs automatically every 24 hours
+- Handles job lifecycle:
+  - Closes applications after the deadline (no new applications allowed)
+  - Later marks the job as closed and updates remaining applications
+- Keeps the system consistent without manual work
 
 ---
 
-## 📂 Folder Structure
-
-project/
-│── accounts/ → Authentication & profiles
-│── jobs/ → Job logic (models, forms, views)
-│── jobportal/ → Core project settings
-│── templates/ → HTML templates
-│── static/ → CSS, images
-│── media/ → Uploaded resumes/profile photos
-│── db.sqlite3 → (Optional demo database)
-│── manage.py
-│── requirements.txt
-
+### 🔹 Async Processing (Celery + Redis)
+- Handles tasks in the background:
+  - Sending emails
+  - Sending OTPs
+  - Updating application status
+- Keeps the app fast and responsive
 
 ---
 
-## ▶️ Installation & Setup
+### 🔹 Rate Limiting Middleware (Redis)
+- Custom middleware using Redis
+- Limits how many requests a user can make
+- Prevents spam and abuse
+- Works using time windows
 
-#### 1️⃣ Create Virtual Environment
-```sh
-python -m venv venv
+---
 
-2️⃣ Activate Virtual Environment
+### 🔹 Search & Filtering
+- Full-text search (FTS) using PostgreSQL
+- Website supports filtering for better job discovery
 
-Windows:
+---
 
-venv\Scripts\activate
+### 🔹 OTP Verification
+- Email OTP (SMTP)
+- SMS OTP (Twilio)
+- OTP expires after some time
+- Unverified users are removed automatically
 
+---
 
-Mac/Linux:
+### 🔹 Notifications
+- Sent when:
+  - Application status changes
+  - Interview is scheduled
+  - Job is closed
+- Processed in background using Celery
 
-source venv/bin/activate
+---
 
-3️⃣ Install Dependencies
+### 🔹 Job & Application Flow
+- Application stages:
+  - Applied → Shortlisted → Interview → Offered / Rejected
+- Separate stages for:
+  - Application deadline (stop applying)
+  - Final job closure (after interviews)
+- Prevents duplicate applications
+- Supports bulk actions
+
+---
+
+### 🔹 Dashboards
+- Candidate dashboard:
+  - View applications and status
+
+- Company dashboard:
+  - Manage jobs and applicants
+  - Update application status
+
+---
+
+## 🧠 How It Works
+
+### Application Flow
+
+1. Candidate applies to a job  
+2. Application is saved  
+3. Company updates status  
+4. Notification task runs  
+5. Candidate gets update  
+
+---
+
+### Background Task Flow
+
+1. Action triggers a task  
+2. Task goes to Redis queue  
+3. Celery processes it  
+4. Email/SMS is sent  
+
+---
+
+### Scheduled Task Flow
+
+1. Runs every 24 hours  
+2. Closes applications after deadline  
+3. Later closes the job and updates applications  
+
+---
+
+## ⚙️ Setup
+
+Runs out of the box on SQLite. PostgreSQL, Redis/Celery, SMTP and Twilio are optional
+and switch on when their values are set in `.env` (copy `.env.example`).
+
+| Service | Without config | With config |
+|---|---|---|
+| Database | SQLite (word-match search) | PostgreSQL full-text search (`POSTGRES_PASSWORD`) |
+| Tasks | Run in-process; daily job lifecycle runs at most hourly on request | Celery worker + beat (`REDIS_URL`) |
+| Cache / rate limit | In-memory | Redis |
+| Email / OTP | Printed to the console | SMTP (`EMAIL`, `EMAIL_PASSWORD`) |
+| SMS OTP | Printed to the console | Twilio (`TWILIO_SID`, `TWILIO_AUTH`, `FROM_NO`) |
+
+### Install & run
+```bash
 pip install -r requirements.txt
-
-4️⃣ Apply Migrations
 python manage.py migrate
-
-5️⃣ Create Admin User (Optional)
 python manage.py createsuperuser
-
-6️⃣ Start Server
 python manage.py runserver
+```
 
+Companies must be approved by an admin before they can post jobs:
+Admin → Companies → tick **Is verified**.
 
-Open in browser:
-👉 http://127.0.0.1:8000/
-
-✨ Future Improvements
-
-Employer dashboard
-
-Search & filter jobs
-
-Email notifications
-
-Bookmark jobs
-
-Application status tracking
-
-👩‍💻 Author
-
-Suhas GP
-Learning and building real-world Django applications.
-
+### With Redis (optional)
+```bash
+celery -A jobportal worker -l info --pool=solo
+celery -A jobportal beat -l info
+```
